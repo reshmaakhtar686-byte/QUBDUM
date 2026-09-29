@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUBDUM - Play the Ultimate Pong Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            letter-spacing: 2px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 20px;
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            color: #00ff88;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 100px 20px;
+            text-align: center;
+            border-bottom: 3px solid #00ff88;
+        }
+
+        .hero h1 {
+            font-size: 64px;
+            color: #00ff88;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.6);
+            animation: glow 2s ease-in-out infinite;
+            letter-spacing: 3px;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 20px rgba(0, 255, 136, 0.5); }
+            50% { text-shadow: 0 0 40px rgba(0, 255, 136, 0.8); }
+        }
+
+        .hero p {
+            font-size: 24px;
+            color: #00ccff;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: #fff;
+            border: 2px solid #00ff88;
+        }
+
+        .btn-primary:hover {
+            background: #00ff88;
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #00ff88;
+            border: 2px solid #00ff88;
+        }
+
+        .btn-secondary:hover {
+            background: #00ff88;
+            color: #000;
+        }
+
+        /* Game Container */
+        .game-section {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 30px;
+            background: rgba(0, 255, 136, 0.05);
+            border: 2px solid #00ff88;
+            border-radius: 15px;
+        }
+
+        .game-section h2 {
+            color: #00ff88;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        #gameCanvas {
+            display: block;
+            margin: 0 auto;
+            background: #0a0a0a;
+            border: 2px solid #00ccff;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+        }
+
+        .game-controls {
+            margin-top: 20px;
+            text-align: center;
+            color: #00ccff;
+        }
+
+        .game-controls p {
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        /* Features Section */
+        .features {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 0 20px;
+        }
+
+        .features h2 {
+            text-align: center;
+            color: #00ff88;
+            font-size: 36px;
+            margin-bottom: 50px;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .feature-card h3 {
+            color: #00ff88;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .feature-card p {
+            color: #00ccff;
+            line-height: 1.6;
+        }
+
+        /* About Section */
+        .about {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            margin: 80px 0;
+            padding: 60px 20px;
+            border-top: 3px solid #00ff88;
+            border-bottom: 3px solid #00ff88;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about h2 {
+            color: #00ff88;
+            font-size: 36px;
+            margin-bottom: 30px;
+        }
+
+        .about p {
+            color: #00ccff;
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        /* Download Section */
+        .download {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 0 20px;
+        }
+
+        .download h2 {
+            text-align: center;
+            color: #00ff88;
+            font-size: 36px;
+            margin-bottom: 50px;
+        }
+
+        .download-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .download-card {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .download-card h3 {
+            color: #00ff88;
+            margin-bottom: 15px;
+        }
+
+        .download-card p {
+            color: #00ccff;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .download-card a {
+            display: inline-block;
+            background: #667eea;
+            color: #fff;
+            padding: 10px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: 2px solid #00ff88;
+        }
+
+        .download-card a:hover {
+            background: #00ff88;
+            color: #000;
+        }
+
+        /* Footer */
+        footer {
+            background: #0a0a0a;
+            border-top: 2px solid #00ff88;
+            padding: 40px 20px;
+            text-align: center;
+            color: #00ccff;
+        }
+
+        footer p {
+            margin: 10px 0;
+        }
+
+        .social-links {
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            color: #00ff88;
+            text-decoration: none;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #00ccff;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 40px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            nav a {
+                margin: 0 10px;
+                font-size: 14px;
+            }
+
+            .hero-buttons {
+                gap: 10px;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+
+            .features h2 {
+                font-size: 28px;
+            }
+        }
+
+        .status {
+            text-align: center;
+            color: #ffff00;
+            font-weight: bold;
+            margin-top: 15px;
+            min-height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">🎮 QUBDUM</div>
+            <div>
+                <a href="#game">Play</a>
+                <a href="#features">Features</a>
+                <a href="#about">About</a>
+                <a href="#download">Download</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>QUBDUM</h1>
+        <p>The Ultimate Modern Pong Experience</p>
+        <div class="hero-buttons">
+            <button class="btn btn-primary" onclick="scrollToGame()">🎮 Play Now</button>
+            <a href="https://github.com/reshmaakhtar686-byte/QUBDUM" class="btn btn-secondary">⭐ GitHub</a>
+        </div>
+    </section>
+
+    <!-- Game Section -->
+    <section id="game" class="game-section">
+        <h2>Play QUBDUM Online</h2>
+        <canvas id="gameCanvas" width="800" height="400"></canvas>
+        <div class="game-controls">
+            <div style="display: flex; justify-content: space-around; margin-top: 20px; flex-wrap: wrap;">
+                <div>
+                    <p><strong>Player Score:</strong> <span id="playerScore" style="color: #00ff88;">0</span></p>
+                </div>
+                <div>
+                    <p><strong>Computer Score:</strong> <span id="computerScore" style="color: #00ccff;">0</span></p>
+                </div>
+            </div>
+            <div class="status" id="gameStatus">Click on game → Press SPACE to Start</div>
+            <p>🖱️ <strong>Mouse:</strong> Move paddle | ⌨️ <strong>Arrow Keys:</strong> Move paddle</p>
+            <p>🎯 <strong>SPACE:</strong> Start/Pause | 🔄 <strong>R:</strong> Reset</p>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <h2>✨ Game Features</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>🎮 Smooth Gameplay</h3>
+                <p>Ultra-fast 60 FPS rendering with responsive controls</p>
+            </div>
+            <div class="feature-card">
+                <h3>🤖 AI Opponent</h3>
+                <p>Intelligent computer opponent that adapts to your play style</p>
+            </div>
+            <div class="feature-card">
+                <h3>🎨 Neon Design</h3>
+                <p>Beautiful neon visual effects with glowing paddles and ball</p>
+            </div>
+            <div class="feature-card">
+                <h3>📱 Mobile Ready</h3>
+                <p>Play on any device - desktop, tablet, or smartphone</p>
+            </div>
+            <div class="feature-card">
+                <h3>⚡ Fast & Light</h3>
+                <p>Lightweight game that runs on any modern browser</p>
+            </div>
+            <div class="feature-card">
+                <h3>🏆 Real Scoreboard</h3>
+                <p>Keep track of your score against the computer</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="about-content">
+            <h2>About QUBDUM</h2>
+            <p>
+                QUBDUM is a modern reimagination of the classic Pong arcade game. 
+                Challenge an intelligent AI opponent in fast-paced, addictive gameplay 
+                with stunning neon visual effects.
+            </p>
+            <p>
+                Built with cutting-edge web technology and designed for maximum enjoyment 
+                across all devices. Whether you're a casual gamer or a competitive player, 
+                QUBDUM offers an engaging gaming experience.
+            </p>
+            <p style="color: #00ff88; font-weight: bold;">
+                Made by Ayaan Junaid 🚀
+            </p>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="download">
+        <h2>📥 Download QUBDUM</h2>
+        <div class="download-options">
+            <div class="download-card">
+                <h3>🌐 Web Version</h3>
+                <p>Play instantly in your browser</p>
+                <a href="https://github.com/reshmaakhtar686-byte/QUBDUM/archive/refs/heads/main.zip">Download</a>
+            </div>
+            <div class="download-card">
+                <h3>📱 Android App</h3>
+                <p>Coming soon to Google Play Store</p>
+                <a href="#" onclick="alert('Coming Soon!'); return false;">Play Store</a>
+            </div>
+            <div class="download-card">
+                <h3>🍎 iOS App</h3>
+                <p>Coming soon to Apple App Store</p>
+                <a href="#" onclick="alert('Coming Soon!'); return false;">App Store</a>
+            </div>
+            <div class="download-card">
+                <h3>💻 GitHub</h3>
+                <p>View source code and contribute</p>
+                <a href="https://github.com/reshmaakhtar686-byte/QUBDUM">GitHub Repo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 QUBDUM. All rights reserved.</p>
+        <p>Developed by <strong>Ayaan Junaid</strong></p>
+        <div class="social-links">
+            <a href="https://github.com/reshmaakhtar686-byte">GitHub</a>
+            <a href="https://twitter.com">Twitter</a>
+            <a href="https://instagram.com">Instagram</a>
+        </div>
+    </footer>
+
+    <script>
+        // Game code
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const playerScoreDisplay = document.getElementById('playerScore');
+        const computerScoreDisplay = document.getElementById('computerScore');
+        const gameStatusDisplay = document.getElementById('gameStatus');
+
+        // Game Objects
+        const paddleWidth = 10;
+        const paddleHeight = 80;
+        const ballSize = 8;
+
+        let gameRunning = false;
+        let gamePaused = false;
+
+        const player = {
+            x: 10,
+            y: canvas.height / 2 - paddleHeight / 2,
+            width: paddleWidth,
+            height: paddleHeight,
+            dy: 0,
+            score: 0,
+            speed: 7
+        };
+
+        const computer = {
+            x: canvas.width - paddleWidth - 10,
+            y: canvas.height / 2 - paddleHeight / 2,
+            width: paddleWidth,
+            height: paddleHeight,
+            dy: 0,
+            score: 0,
+            speed: 5
+        };
+
+        const ball = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            dx: 5,
+            dy: 5,
+            radius: ballSize,
+            speed: 5
+        };
+
+        let mouseY = canvas.height / 2;
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouseY = e.clientY - rect.top;
+        });
+
+        const keys = {};
+
+        document.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+
+            if (e.key === ' ') {
+                e.preventDefault();
+                if (!gameRunning) {
+                    startGame();
+                } else {
+                    gamePaused = !gamePaused;
+                    updateGameStatus();
+                }
+            }
+
+            if (e.key.toLowerCase() === 'r') {
+                resetGame();
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+
+        function updateGameStatus() {
+            if (!gameRunning) {
+                gameStatusDisplay.textContent = 'Click on game → Press SPACE to Start';
+            } else if (gamePaused) {
+                gameStatusDisplay.textContent = '⏸️ PAUSED - Press SPACE to Resume';
+            } else {
+                gameStatusDisplay.textContent = '▶️ PLAYING';
+            }
+        }
+
+        function startGame() {
+            gameRunning = true;
+            gamePaused = false;
+            gameStatusDisplay.textContent = '▶️ PLAYING';
+        }
+
+        function resetGame() {
+            gameRunning = false;
+            gamePaused = false;
+            player.score = 0;
+            computer.score = 0;
+            player.y = canvas.height / 2 - paddleHeight / 2;
+            computer.y = canvas.height / 2 - paddleHeight / 2;
+            ball.x = canvas.width / 2;
+            ball.y = canvas.height / 2;
+            ball.dx = 5;
+            ball.dy = 5;
+            playerScoreDisplay.textContent = '0';
+            computerScoreDisplay.textContent = '0';
+            updateGameStatus();
+        }
+
+        function updatePlayer() {
+            if (mouseY - paddleHeight / 2 > 0 && mouseY + paddleHeight / 2 < canvas.height) {
+                player.y = mouseY - paddleHeight / 2;
+            }
+
+            if (keys['ArrowUp'] || keys['w'] || keys['W']) {
+                player.y = Math.max(0, player.y - player.speed);
+            }
+            if (keys['ArrowDown'] || keys['s'] || keys['S']) {
+                player.y = Math.min(canvas.height - paddleHeight, player.y + player.speed);
+            }
+
+            player.y = Math.max(0, Math.min(canvas.height - paddleHeight, player.y));
+        }
+
+        function updateComputer() {
+            const computerCenter = computer.y + paddleHeight / 2;
+            const ballCenter = ball.y;
+
+            if (computerCenter < ballCenter - 35) {
+                computer.y = Math.min(canvas.height - paddleHeight, computer.y + computer.speed);
+            } else if (computerCenter > ballCenter + 35) {
+                computer.y = Math.max(0, computer.y - computer.speed);
+            }
+
+            computer.speed = 5 + (Math.abs(ball.dx) / 10);
+        }
+
+        function updateBall() {
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+
+            if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
+                ball.dy = -ball.dy;
+                ball.y = Math.max(ball.radius, Math.min(canvas.height - ball.radius, ball.y));
+            }
+
+            if (
+                ball.x - ball.radius < player.x + player.width &&
+                ball.y > player.y &&
+                ball.y < player.y + player.height
+            ) {
+                ball.dx = -ball.dx;
+                ball.x = player.x + player.width + ball.radius;
+                const deltaY = ball.y - (player.y + player.height / 2);
+                ball.dy += deltaY * 0.05;
+            }
+
+            if (
+                ball.x + ball.radius > computer.x &&
+                ball.y > computer.y &&
+                ball.y < computer.y + computer.height
+            ) {
+                ball.dx = -ball.dx;
+                ball.x = computer.x - ball.radius;
+                const deltaY = ball.y - (computer.y + computer.height / 2);
+                ball.dy += deltaY * 0.05;
+            }
+
+            if (ball.x - ball.radius < 0) {
+                computer.score++;
+                computerScoreDisplay.textContent = computer.score;
+                resetBall();
+            }
+
+            if (ball.x + ball.radius > canvas.width) {
+                player.score++;
+                playerScoreDisplay.textContent = player.score;
+                resetBall();
+            }
+        }
+
+        function resetBall() {
+            ball.x = canvas.width / 2;
+            ball.y = canvas.height / 2;
+            ball.dx = (Math.random() > 0.5 ? 1 : -1) * 5;
+            ball.dy = (Math.random() - 0.5) * 8;
+        }
+
+        function drawPaddle(paddle) {
+            ctx.fillStyle = '#00ff88';
+            ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+            ctx.shadowColor = 'rgba(0, 255, 136, 0.5)';
+            ctx.shadowBlur = 10;
+        }
+
+        function drawBall() {
+            ctx.fillStyle = '#00ccff';
+            ctx.shadowColor = 'rgba(0, 204, 255, 0.8)';
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowColor = 'transparent';
+        }
+
+        function drawCenterLine() {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.setLineDash([5, 10]);
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, 0);
+            ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function draw() {
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            drawCenterLine();
+            drawPaddle(player);
+            drawPaddle(computer);
+            drawBall();
+
+            ctx.shadowColor = 'transparent';
+        }
+
+        function update() {
+            if (!gameRunning || gamePaused) return;
+
+            updatePlayer();
+            updateComputer();
+            updateBall();
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function scrollToGame() {
+            document.getElementById('game').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        updateGameStatus();
+        draw();
+        gameLoop();
+    </script>
+</body>
+</html>
